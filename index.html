@@ -7,22 +7,20 @@
     
     <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuWBpemgq+aWsOaJi+i1t+eTn+aOqeaJi4iLAogICJzaG9ydF9uYW1lIjogIuWBpemgq+aWsOaJi+IqwogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiMzYjgyZjYiCn0=">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            /* 明亮藍白配色 */
-            --bg-color: #f3f6f9;       /* 淺灰藍背景，避免純白刺眼 */
-            --card-bg: #ffffff;        /* 純白卡片 */
-            --primary: #2563eb;        /* 亮藍色 Main Blue */
-            --primary-light: #eff6ff;  /* 極淺藍 (背景點綴) */
-            --text-main: #1f2937;      /* 深灰黑 */
-            --text-sub: #6b7280;       /* 淺灰 */
-            --accent: #3b82f6;         /* 輔助藍 */
-            --danger: #ef4444;
+            /* 視覺風格：明亮藍白 */
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #2563eb;       /* 主藍色 */
+            --primary-soft: #dbeafe;  /* 柔和藍背景 */
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --success: #10b981;       /* 成功綠 */
             --nav-height: 65px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
@@ -35,7 +33,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            overflow-x: hidden;
             padding-bottom: calc(var(--nav-height) + 20px);
         }
 
@@ -44,185 +41,109 @@
             margin: 0 auto;
             min-height: 100vh;
             position: relative;
-            background-color: var(--bg-color);
         }
 
-        /* 文字排版 */
-        h1, h2, h3 { margin: 0 0 10px 0; font-weight: 700; color: #111827; }
-        p { margin: 0 0 10px 0; color: var(--text-sub); line-height: 1.6; }
+        h1, h2, h3 { margin: 0 0 10px 0; font-weight: 700; color: #0f172a; }
+        p { margin: 0 0 10px 0; color: var(--text-sub); line-height: 1.6; font-size: 0.95rem; }
         
-        .section {
-            padding: 20px;
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
+        .section { padding: 20px; display: none; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 卡片樣式 (改為白色圓角 + 陰影) */
+        /* 卡片 */
         .card {
-            background-color: var(--card-bg);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
             box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
         }
 
-        /* 按鈕樣式 */
+        /* 已完成的動作卡片樣式 */
+        .card.completed {
+            background: #f1f5f9;
+            border-left: 5px solid var(--success);
+            opacity: 0.8;
+        }
+
+        /* 按鈕 */
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
-            background-color: var(--primary);
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            transition: transform 0.1s, background-color 0.2s;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn:hover { background-color: #1d4ed8; }
-        .btn-outline { 
-            background: transparent; 
-            border: 2px solid var(--primary); 
-            color: var(--primary); 
-            box-shadow: none;
-        }
-        .btn-danger { background-color: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-
-        /* 表單元素 */
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #374151; font-weight: 500; font-size: 0.95rem; }
-        input, select {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-            color: #111827;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; }
-
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            background: #f3f4f6;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; padding: 14px; border-radius: 12px;
+            background-color: var(--primary); color: #fff;
+            font-weight: 600; font-size: 1rem; border: none; cursor: pointer;
             transition: background 0.2s;
         }
-        .checkbox-item:hover { background: #e5e7eb; }
-        .checkbox-item input { width: auto; margin-right: 10px; }
+        .btn:active { transform: scale(0.98); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-success { background-color: var(--success); }
+        .btn-stop { background-color: #ef4444; }
+
+        /* 表單 */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; color: var(--text-sub); font-size: 0.9rem; }
+        input[type="text"], select {
+            width: 100%; padding: 12px; border-radius: 10px;
+            border: 1px solid #cbd5e1; background: #fff;
+            font-size: 1rem; appearance: none;
+            /* 自定義箭頭 */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 12px auto;
+        }
+        .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .checkbox-item { display: flex; align-items: center; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .checkbox-item input { margin-right: 8px; }
 
         /* 導航列 */
         .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: var(--nav-height);
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #e5e7eb;
-            z-index: 100;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            height: var(--nav-height); background: #fff;
+            display: flex; justify-content: space-around; align-items: center;
+            border-top: 1px solid #e2e8f0; z-index: 100;
         }
-        
-        .nav-item {
-            color: #9ca3af;
-            text-align: center;
-            font-size: 0.75rem;
-            cursor: pointer;
-            flex: 1;
-            padding: 10px 0;
-            transition: color 0.2s;
-        }
-        .nav-item i { font-size: 1.3rem; margin-bottom: 4px; display: block; }
+        .nav-item { color: var(--text-sub); text-align: center; font-size: 0.75rem; flex: 1; padding: 8px 0; }
+        .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 2px; }
         .nav-item.active { color: var(--primary); }
 
-        /* 訓練頁面樣式 */
+        /* 特殊元件 */
         .tag {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background: var(--primary-light);
-            color: var(--primary);
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-right: 5px;
+            display: inline-block; padding: 4px 10px; border-radius: 20px;
+            background: var(--primary-soft); color: var(--primary);
+            font-size: 0.8rem; font-weight: 600;
+        }
+        
+        .muscle-info {
+            background-color: #f8fafc; border-radius: 8px; padding: 12px;
+            margin: 10px 0; border-left: 3px solid var(--primary);
+            font-size: 0.9rem;
         }
 
-        .exercise-media {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .media-box {
-            flex: 1;
-            background: #f0f0f0;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            aspect-ratio: 16/10;
-        }
-        .media-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .media-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            font-size: 0.7rem;
-            padding: 4px;
-            text-align: center;
+        .workout-input-row { display: flex; gap: 8px; margin-top: 15px; }
+        .w-input-group { flex: 1; }
+        .w-input-group label { font-size: 0.75rem; margin-bottom: 2px; }
+        .w-input-group input { 
+            width: 100%; padding: 8px; border: 1px solid #cbd5e1; 
+            border-radius: 6px; text-align: center; font-weight: bold; color: var(--primary);
         }
 
-        .tips { 
-            background: #fffbeb; 
-            color: #92400e; 
-            padding: 12px; 
-            border-radius: 8px; 
-            font-size: 0.9rem; 
-            margin: 10px 0; 
-            border-left: 4px solid #f59e0b; 
+        .timer-display {
+            font-size: 2rem; font-weight: 800; text-align: center;
+            color: var(--text-main); margin: 15px 0; font-family: monospace;
         }
 
-        .input-row { display: flex; gap: 10px; margin-top: 15px; }
-        .input-group { flex: 1; }
-        .input-group span { font-size: 0.8rem; color: var(--text-sub); display: block; margin-bottom: 4px;}
-
-        /* 進度條 */
-        .progress-bar-bg { width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px; margin-top: 5px; }
-        .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; width: 0%; transition: width 0.5s ease; }
-
-        /* Onboarding 覆蓋 */
-        #onboarding-page { z-index: 200; background: var(--bg-color); min-height: 100vh; position: absolute; top: 0; width: 100%; padding-bottom: 50px;}
+        /* 彈窗 Modal */
+        #checkin-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 300;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #fff; width: 90%; max-width: 400px;
+            padding: 25px; border-radius: 20px;
+            animation: fadeIn 0.3s ease;
+        }
 
     </style>
 </head>
@@ -231,58 +152,55 @@
 <div class="app-container">
 
     <div id="onboarding-page" class="section">
-        <h1 style="color: var(--primary); margin-top: 20px;">打造你的專屬菜單</h1>
-        <p>請詳細填寫，讓我們為您計算最佳訓練量。</p>
+        <h1 style="color: var(--primary); margin-top: 10px;">初始設定</h1>
+        <p>建立您的檔案，讓我們用 AI 為您規劃重量。</p>
         
         <div class="card">
-            <h3>身體數據</h3>
             <div class="form-group">
-                <label>姓名 / 暱稱</label>
-                <input type="text" id="ob-name" placeholder="例如：Alex">
+                <label>姓名</label>
+                <input type="text" id="ob-name" placeholder="您的稱呼">
             </div>
+            
             <div class="checkbox-grid">
                 <div class="form-group">
                     <label>身高 (cm)</label>
-                    <input type="number" id="ob-height" placeholder="175">
+                    <select id="ob-height"></select>
                 </div>
                 <div class="form-group">
                     <label>體重 (kg)</label>
-                    <input type="number" id="ob-weight" placeholder="70">
+                    <select id="ob-weight"></select>
                 </div>
             </div>
+            
             <div class="checkbox-grid">
                 <div class="form-group">
-                    <label>體脂率 (%) <small>(選填)</small></label>
-                    <input type="number" id="ob-fat" placeholder="20">
+                    <label>體脂率 (%)</label>
+                    <select id="ob-fat"></select>
                 </div>
                 <div class="form-group">
-                    <label>基礎代謝 (BMR) <small>(選填)</small></label>
-                    <input type="number" id="ob-bmr" placeholder="1600">
+                    <label>基礎代謝 (BMR)</label>
+                    <select id="ob-bmr"></select>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3>目標設定</h3>
+            <h3>目標與時間</h3>
             <div class="form-group">
                 <label>主要目標</label>
                 <select id="ob-goal">
-                    <option value="fat_loss">減脂 (Fat Loss)</option>
-                    <option value="muscle">增肌 (Muscle Build)</option>
-                    <option value="strength">力量提升 (Strength)</option>
+                    <option value="muscle">增肌 (提升肌肉量)</option>
+                    <option value="fat_loss">減脂 (降低體脂)</option>
+                    <option value="health">健康維持</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>具體目標描述</label>
-                <input type="text" id="ob-target-desc" placeholder="例如：減掉5公斤、深蹲100公斤...">
-            </div>
-            <div class="form-group">
                 <label>預計達成時間</label>
-                <select id="ob-weeks">
-                    <option value="4">4 週 (短期衝刺 - 強度高)</option>
-                    <option value="8">8 週 (標準週期)</option>
-                    <option value="12" selected>12 週 (穩健改變)</option>
-                    <option value="24">24 週以上 (長期習慣)</option>
+                <select id="ob-time">
+                    <option value="4">4 週 (短期)</option>
+                    <option value="8">8 週 (標準)</option>
+                    <option value="12" selected>12 週 (建議)</option>
+                    <option value="24">24 週 (長期)</option>
                 </select>
             </div>
             <div class="form-group">
@@ -297,80 +215,64 @@
         </div>
 
         <div class="card">
-            <h3>可用器材 (請勾選)</h3>
-            <div class="checkbox-grid" id="ob-equipment">
-                </div>
+            <h3>可用器材</h3>
+            <div class="checkbox-grid" id="ob-equipment"></div>
         </div>
 
-        <button class="btn" onclick="app.completeOnboarding()">生成我的計畫</button>
+        <button class="btn" onclick="app.completeOnboarding()">建立檔案</button>
     </div>
 
     <div id="home-page" class="section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: end; margin-bottom: 15px;">
             <div>
-                <h2 id="home-greeting" style="color: var(--primary);">Hi, ...</h2>
-                <p id="home-stats" style="font-size: 0.9rem;">BMI: -- | TDEE: --</p>
-            </div>
-            <div style="text-align: right;">
-                <span class="tag" id="target-tag">目標: 增肌</span>
+                <h2 id="home-greeting" style="color: var(--primary); margin-bottom: 5px;">Hi, User</h2>
+                <div id="week-date-range" class="tag">1/12 - 1/18</div>
             </div>
         </div>
 
         <div class="card">
-            <div style="display:flex; justify-content:space-between;">
-                <h3>本週目標</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
+                <h3 style="font-size:1rem;">本週目標</h3>
                 <span id="week-progress-text" style="color:var(--primary); font-weight:bold;">0/3</span>
             </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="home-progress-bar"></div>
+            <div style="width:100%; height:8px; background:#e2e8f0; border-radius:4px;">
+                <div id="home-progress-bar" style="width:0%; height:100%; background:var(--primary); border-radius:4px; transition:width 0.5s;"></div>
             </div>
-            <p style="margin-top:10px; font-size:0.85rem;">保持規律是關鍵！</p>
         </div>
 
-        <div class="card" style="text-align: center; padding: 40px 20px; border: 2px dashed var(--primary); background: var(--primary-light);">
-            <i class="fa-solid fa-fire fa-3x" style="color: var(--primary); margin-bottom: 15px;"></i>
-            <h3>今日訓練準備就緒</h3>
-            <p id="daily-suggestion">根據你的時間表，今天適合進行...</p>
-            <button class="btn" onclick="app.generateAndStartWorkout()">生成今日菜單</button>
+        <div class="card" style="text-align: center; border: 2px dashed var(--primary); background: #f8fafc;">
+            <i class="fa-solid fa-dumbbell fa-2x" style="color: var(--primary); margin-bottom: 10px;"></i>
+            <h3>今日菜單</h3>
+            <p id="daily-suggestion">AI 已根據您的數據計算最佳重量。</p>
+            <button class="btn" onclick="app.generateAndStartWorkout()">開始今日訓練</button>
         </div>
 
         <div class="card">
-            <h3><i class="fa-solid fa-clock-rotate-left"></i> 近期摘要</h3>
-            <div id="last-week-summary">
-                <p>尚無訓練紀錄。</p>
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> 上次紀錄</h3>
+            <div id="last-workout-summary">
+                <p>尚無紀錄。</p>
             </div>
         </div>
     </div>
 
     <div id="workout-page" class="section">
         <h2 id="workout-title">今日訓練</h2>
-        <p id="workout-focus">...</p>
-
         <div id="workout-list"></div>
-
-        <button class="btn" onclick="app.finishWorkout()">完成訓練並儲存</button>
-        <button class="btn btn-outline" onclick="app.navigate('home-page')" style="margin-top: 15px;">取消 / 返回</button>
+        <button class="btn btn-success" onclick="app.finishWorkout()" style="margin-top: 20px;">全部完成並儲存</button>
+        <button class="btn btn-outline" onclick="app.navigate('home-page')" style="margin-top: 10px;">返回首頁</button>
     </div>
 
     <div id="progress-page" class="section">
         <h2>數據追蹤</h2>
-        
         <div class="card">
-            <h3>訓練頻率趨勢</h3>
-            <canvas id="progressChart"></canvas>
+            <h3>每週頻率</h3>
+            <canvas id="freqChart"></canvas>
         </div>
-
         <div class="card">
             <h3>身體數據變化</h3>
-            <p>起始體重: <span id="start-weight">--</span> kg</p>
-            <p>目前目標: <span id="current-goal-desc">--</span></p>
-            <p>剩餘時間: <span id="time-left">--</span> 週</p>
-        </div>
-
-        <div class="card">
-            <h3>AI 教練建議</h3>
-            <p id="ai-advice">點擊按鈕獲取建議...</p>
-            <button class="btn btn-outline" onclick="app.generateAdvice()">分析下週建議</button>
+            <p>初始體重: <span id="stat-start-weight">--</span> kg</p>
+            <p>目前體重: <span id="stat-curr-weight">--</span> kg</p>
+            <p>剩餘時間: <span id="stat-weeks">--</span> 週</p>
         </div>
     </div>
 
@@ -379,10 +281,28 @@
             <i class="fa-solid fa-house"></i> 首頁
         </div>
         <div class="nav-item" onclick="app.navigate('progress-page')">
-            <i class="fa-solid fa-chart-pie"></i> 數據
+            <i class="fa-solid fa-chart-line"></i> 數據
         </div>
-        <div class="nav-item" onclick="app.resetData()" style="color: var(--danger)">
-            <i class="fa-solid fa-user-gear"></i> 重設
+        <div class="nav-item" onclick="app.resetData()" style="color: var(--text-sub)">
+            <i class="fa-solid fa-gear"></i> 重置
+        </div>
+    </div>
+
+    <div id="checkin-modal" style="display: none;">
+        <div class="modal-content">
+            <h2 style="color:var(--primary)">週一 Check-in</h2>
+            <p>新的一週開始了！請更新您的身體數據，讓 AI 調整強度。</p>
+            
+            <div class="form-group">
+                <label>目前體重 (kg)</label>
+                <select id="ci-weight"></select>
+            </div>
+            <div class="form-group">
+                <label>目前體脂 (%)</label>
+                <select id="ci-fat"></select>
+            </div>
+            
+            <button class="btn" onclick="app.submitCheckin()">更新並繼續</button>
         </div>
     </div>
 
@@ -390,11 +310,10 @@
 
 <script>
 /**
- * 健身助手 Pro - 核心邏輯
+ * 健身助手 - 核心邏輯
  */
 
-// 1. 資料庫 (含圖片 Placeholder 連結)
-// 使用 placehold.co 生成帶有文字的圖片，模擬 GIF 和肌群圖
+// 1. 資料與工具
 const EQUIPMENTS = [
     { id: 'treadmill', name: '跑步機' },
     { id: 'dumbbell', name: '啞鈴' },
@@ -402,77 +321,125 @@ const EQUIPMENTS = [
     { id: 'shoulder_press', name: '坐姿肩推機' },
     { id: 'lat_pulldown', name: '滑輪下拉機' },
     { id: 'rowing_machine', name: '坐姿划船機' },
-    { id: 'leg_curl', name: '腿彎舉機' },
     { id: 'leg_press', name: '腿推機' },
-    { id: 'pec_fly', name: '蝴蝶機' },
     { id: 'roman_chair', name: '羅馬椅' },
     { id: 'mat', name: '瑜珈墊(徒手)' }
 ];
 
-// Helper: 產生圖片 URL (實務上請換成真實路徑)
-const getGifUrl = (text) => `https://placehold.co/600x400/e0f2fe/1e40af?text=${encodeURIComponent(text + '\n(GIF)')}`;
-const getMuscleUrl = (text) => `https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(text + '\n(肌群)')}`;
-
 const EXERCISE_DB = {
     warmup: [
-        { name: '跑步機快走', equip: 'treadmill', type: 'cardio', gif: '跑步機演示', muscle: '全身心肺', tips: '速度 5-6，雙手擺動。' },
-        { name: '開合跳', equip: 'mat', type: 'cardio', gif: '開合跳演示', muscle: '全身/小腿', tips: '落地輕盈，保持呼吸。' }
+        { name: '快走熱身', equip: 'treadmill', type: 'cardio', muscle: '全身心肺 / 腿部', tips: '速度 5-6，雙手自然擺動，身體微前傾，提升核心溫度。' },
+        { name: '原地開合跳', equip: 'mat', type: 'cardio', muscle: '小腿 / 肩部 / 心肺', tips: '落地時膝蓋微彎緩衝，保持呼吸節奏。' }
     ],
-    chest: [
-        { name: '坐姿胸推', equip: 'chest_press', type: 'push', gif: '胸推機演示', muscle: '胸大肌/三頭', tips: '挺胸，肩胛骨收緊，推時吐氣。' },
-        { name: '啞鈴臥推', equip: 'dumbbell', type: 'push', gif: '啞鈴臥推演示', muscle: '胸大肌', tips: '手腕中立，下放至胸線。' },
-        { name: '蝴蝶機夾胸', equip: 'pec_fly', type: 'push', gif: '夾胸演示', muscle: '胸中縫', tips: '像抱樹一樣環抱，手肘微彎。' }
-    ],
-    back: [
-        { name: '滑輪下拉', equip: 'lat_pulldown', type: 'pull', gif: '下拉演示', muscle: '背闊肌', tips: '鎖骨方向拉，手肘往下帶。' },
-        { name: '坐姿划船', equip: 'rowing_machine', type: 'pull', gif: '划船演示', muscle: '菱形肌/背厚度', tips: '挺胸，拉向肚臍，夾緊背部。' },
-        { name: '啞鈴單臂划船', equip: 'dumbbell', type: 'pull', gif: '單臂划船演示', muscle: '背闊肌', tips: '背打直，將啞鈴拉至腰側。' }
-    ],
-    shoulder: [
-        { name: '坐姿肩推', equip: 'shoulder_press', type: 'push', gif: '肩推機演示', muscle: '前三角肌', tips: '核心收緊，推至頭頂上方。' },
-        { name: '啞鈴側平舉', equip: 'dumbbell', type: 'push', gif: '側平舉演示', muscle: '中三角肌', tips: '手肘微彎，舉至肩高。' }
-    ],
-    legs: [
-        { name: '啞鈴深蹲', equip: 'dumbbell', type: 'legs', gif: '深蹲演示', muscle: '股四頭/臀大肌', tips: '屁股後坐，膝蓋對準腳尖。' },
-        { name: '腿推舉', equip: 'leg_press', type: 'legs', gif: '腿推機演示', muscle: '股四頭肌', tips: '腳板放穩，膝蓋不鎖死。' },
-        { name: '徒手深蹲', equip: 'mat', type: 'legs', gif: '徒手深蹲演示', muscle: '腿部肌群', tips: '背部挺直，重心在腳跟。' }
+    main: [
+        { name: '坐姿胸推', equip: 'chest_press', type: 'push', factor: 0.4, muscle: '胸大肌 / 前三角 / 三頭肌', tips: '挺胸不聳肩，肩胛骨貼緊椅背，推出去時吐氣。' },
+        { name: '啞鈴臥推', equip: 'dumbbell', type: 'push', factor: 0.3, muscle: '胸大肌 / 手臂', tips: '手腕保持中立，下放時手肘略低於肩膀。' },
+        { name: '滑輪下拉', equip: 'lat_pulldown', type: 'pull', factor: 0.5, muscle: '背闊肌 / 二頭肌', tips: '向鎖骨方向拉，感覺手肘往下帶，身體不要過度後仰。' },
+        { name: '坐姿划船', equip: 'rowing_machine', type: 'pull', factor: 0.5, muscle: '背部厚度 / 菱形肌', tips: '拉向肚臍，夾緊背部，還原時放慢速度。' },
+        { name: '坐姿肩推', equip: 'shoulder_press', type: 'push', factor: 0.25, muscle: '前中三角肌', tips: '核心收緊，推至頭頂上方，不要鎖死關節。' },
+        { name: '啞鈴深蹲', equip: 'dumbbell', type: 'legs', factor: 0.4, muscle: '股四頭肌 / 臀大肌', tips: '雙手持啞鈴，屁股向後坐，膝蓋對準腳尖方向。' },
+        { name: '腿推舉', equip: 'leg_press', type: 'legs', factor: 1.0, muscle: '大腿整體 / 臀部', tips: '腳板放穩，推起時膝蓋微彎不鎖死，下背貼緊椅墊。' }
     ],
     core: [
-        { name: '羅馬椅背伸', equip: 'roman_chair', type: 'core', gif: '背伸演示', muscle: '豎脊肌/下背', tips: '背打直下，夾臀上。' },
-        { name: '平板支撐', equip: 'mat', type: 'core', gif: '平板撐演示', muscle: '腹橫肌', tips: '身體呈直線，收緊腹部。' }
+        { name: '平板支撐', equip: 'mat', type: 'core', factor: 0, muscle: '腹橫肌 / 核心穩定', tips: '身體呈一直線，收緊臀部與腹部，保持自然呼吸。' },
+        { name: '羅馬椅背伸', equip: 'roman_chair', type: 'core', factor: 0, muscle: '豎脊肌 / 下背 / 臀', tips: '背打直下去，上來時夾臀，不要過度後仰。' }
     ]
 };
 
+// 工具：產生下拉選單選項
+const createOptions = (start, end, step, suffix = '') => {
+    let html = '';
+    for(let i = start; i <= end; i += step) {
+        // 解決浮點數精度問題
+        let val = Math.round(i * 10) / 10;
+        html += `<option value="${val}">${val}${suffix}</option>`;
+    }
+    return html;
+};
+
+// 2. 應用程式核心
 const app = {
     data: {
         profile: null,
         history: [],
-        currentWorkout: null
+        currentWorkout: null,
+        timers: {} // 存 interval ID
     },
 
     init: function() {
-        const storedProfile = localStorage.getItem('gym_pro_profile');
-        const storedHistory = localStorage.getItem('gym_pro_history');
-
+        // 1. 初始化選單
+        this.initDropdowns();
+        
+        const storedProfile = localStorage.getItem('gym_plus_profile');
+        const storedHistory = localStorage.getItem('gym_plus_history');
         if (storedHistory) this.data.history = JSON.parse(storedHistory);
-
-        // 渲染 Onboarding 的器材
-        const equipContainer = document.getElementById('ob-equipment');
-        equipContainer.innerHTML = EQUIPMENTS.map(eq => `
-            <label class="checkbox-item">
-                <input type="checkbox" value="${eq.id}" checked>
-                ${eq.name}
-            </label>
-        `).join('');
 
         if (!storedProfile) {
             this.navigate('onboarding-page');
         } else {
             this.data.profile = JSON.parse(storedProfile);
             document.getElementById('main-nav').style.display = 'flex';
+            this.checkMondayUpdate(); // 檢查是否需要週一更新
             this.renderHome();
             this.navigate('home-page');
         }
+    },
+
+    initDropdowns: function() {
+        // 身高 140-200, 體重 40-150, 體脂 5-50, BMR 1000-3000
+        const fills = [
+            { id: 'ob-height', s: 140, e: 200, st: 1 },
+            { id: 'ob-weight', s: 40, e: 150, st: 0.5 },
+            { id: 'ob-fat', s: 5, e: 50, st: 1 },
+            { id: 'ob-bmr', s: 1000, e: 3000, st: 50 },
+            { id: 'ci-weight', s: 40, e: 150, st: 0.5 }, // Check-in modal
+            { id: 'ci-fat', s: 5, e: 50, st: 1 }
+        ];
+        fills.forEach(f => {
+            const els = document.querySelectorAll(`#${f.id}`);
+            els.forEach(el => el.innerHTML = createOptions(f.s, f.e, f.st));
+        });
+
+        // 器材
+        document.getElementById('ob-equipment').innerHTML = EQUIPMENTS.map(eq => `
+            <label class="checkbox-item">
+                <input type="checkbox" value="${eq.id}" checked>
+                ${eq.name}
+            </label>
+        `).join('');
+    },
+
+    // 週一檢查邏輯
+    checkMondayUpdate: function() {
+        const today = new Date();
+        const isMonday = today.getDay() === 1;
+        const lastCheck = localStorage.getItem('gym_plus_last_checkin');
+        const todayStr = today.toDateString();
+
+        if (isMonday && lastCheck !== todayStr) {
+            // 彈出 Modal
+            const p = this.data.profile;
+            document.getElementById('ci-weight').value = p.weight; // 預選目前體重
+            document.getElementById('ci-fat').value = p.fat;
+            document.getElementById('checkin-modal').style.display = 'flex';
+        }
+    },
+
+    submitCheckin: function() {
+        const newWeight = document.getElementById('ci-weight').value;
+        const newFat = document.getElementById('ci-fat').value;
+        
+        // 更新 Profile
+        this.data.profile.weight = parseFloat(newWeight);
+        this.data.profile.fat = parseFloat(newFat);
+        localStorage.setItem('gym_plus_profile', JSON.stringify(this.data.profile));
+        
+        // 紀錄打卡時間
+        localStorage.setItem('gym_plus_last_checkin', new Date().toDateString());
+        
+        document.getElementById('checkin-modal').style.display = 'none';
+        this.renderHome(); // 更新首頁顯示
+        alert('數據已更新，本週菜單將依此調整！');
     },
 
     navigate: function(pageId) {
@@ -480,7 +447,6 @@ const app = {
         document.getElementById(pageId).classList.add('active');
         window.scrollTo(0, 0);
         
-        // Update Nav
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         if(pageId === 'home-page') document.querySelectorAll('.nav-item')[0].classList.add('active');
         if(pageId === 'progress-page') {
@@ -490,31 +456,22 @@ const app = {
     },
 
     completeOnboarding: function() {
-        // 收集詳細數據
         const p = {
             name: document.getElementById('ob-name').value || '健友',
-            height: Number(document.getElementById('ob-height').value) || 170,
-            weight: Number(document.getElementById('ob-weight').value) || 65,
-            fat: document.getElementById('ob-fat').value,
-            bmr: document.getElementById('ob-bmr').value,
+            height: parseFloat(document.getElementById('ob-height').value),
+            weight: parseFloat(document.getElementById('ob-weight').value),
+            fat: parseFloat(document.getElementById('ob-fat').value),
+            bmr: parseFloat(document.getElementById('ob-bmr').value),
             goal: document.getElementById('ob-goal').value,
-            goalDesc: document.getElementById('ob-target-desc').value || '更健康',
-            weeks: Number(document.getElementById('ob-weeks').value),
-            freq: Number(document.getElementById('ob-freq').value),
-            equipment: Array.from(document.querySelectorAll('#ob-equipment input:checked')).map(cb => cb.value)
+            time: parseInt(document.getElementById('ob-time').value),
+            freq: parseInt(document.getElementById('ob-freq').value),
+            equipment: Array.from(document.querySelectorAll('#ob-equipment input:checked')).map(cb => cb.value),
+            startWeight: parseFloat(document.getElementById('ob-weight').value) // 紀錄初始體重
         };
-        p.equipment.push('mat'); // 永遠有徒手
-
-        // 計算 BMI
-        p.bmi = (p.weight / ((p.height/100) ** 2)).toFixed(1);
-        
-        // 估算 BMR (若未填) - Mifflin-St Jeor 公式簡化版
-        if(!p.bmr) {
-            p.bmr = Math.round(10 * p.weight + 6.25 * p.height - 5 * 25 + 5); // 預設男性公式參數簡化
-        }
+        p.equipment.push('mat'); // 預設徒手
 
         this.data.profile = p;
-        localStorage.setItem('gym_pro_profile', JSON.stringify(p));
+        localStorage.setItem('gym_plus_profile', JSON.stringify(p));
         
         document.getElementById('main-nav').style.display = 'flex';
         this.renderHome();
@@ -522,213 +479,252 @@ const app = {
     },
 
     renderHome: function() {
-        const { name, bmi, bmr, goal, freq, weeks } = this.data.profile;
+        const p = this.data.profile;
+        document.getElementById('home-greeting').textContent = `Hi, ${p.name}`;
         
-        // Header Info
-        document.getElementById('home-greeting').textContent = `Hi, ${name}`;
-        
-        // 計算 TDEE (粗估活動量 1.35)
-        const tdee = Math.round(bmr * 1.35);
-        document.getElementById('home-stats').textContent = `BMI: ${bmi} | BMR: ${bmr} kcal | TDEE: ~${tdee} kcal`;
-        
-        // Goal Tag translation
-        const goalMap = { 'fat_loss': '減脂', 'muscle': '增肌', 'strength': '力量' };
-        document.getElementById('target-tag').textContent = `目標: ${goalMap[goal]}`;
+        // 日期範圍 (週一到週日)
+        const curr = new Date();
+        const first = curr.getDate() - curr.getDay() + 1; // Monday
+        const last = first + 6; // Sunday
+        const firstDay = new Date(curr.setDate(first));
+        const lastDay = new Date(curr.setDate(last));
+        document.getElementById('week-date-range').textContent = `${firstDay.getMonth()+1}/${firstDay.getDate()} - ${lastDay.getMonth()+1}/${lastDay.getDate()}`;
 
-        // Progress Bar
-        const now = new Date();
-        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+        // 本週進度
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
         startOfWeek.setHours(0,0,0,0);
-        const thisWeekCount = this.data.history.filter(h => new Date(h.date) >= startOfWeek).length;
         
-        document.getElementById('week-progress-text').textContent = `${thisWeekCount}/${freq}`;
-        const pct = Math.min((thisWeekCount / freq) * 100, 100);
+        const doneCount = this.data.history.filter(h => new Date(h.date) >= startOfWeek).length;
+        document.getElementById('week-progress-text').textContent = `${doneCount} / ${p.freq}`;
+        const pct = Math.min((doneCount / p.freq) * 100, 100);
         document.getElementById('home-progress-bar').style.width = `${pct}%`;
 
-        // Daily Suggestion Text
-        const urgency = weeks < 8 ? "高強度衝刺" : "穩健週期";
-        document.getElementById('daily-suggestion').textContent = `計畫週期：${urgency}。依據你的器材，今日建議全身性訓練。`;
-
-        // History Summary
-        const summaryDiv = document.getElementById('last-week-summary');
+        // 上次紀錄
+        const summaryDiv = document.getElementById('last-workout-summary');
         if (this.data.history.length > 0) {
             const last = this.data.history[this.data.history.length - 1];
             summaryDiv.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>上次訓練</span>
-                    <span style="color:var(--text-sub); font-size:0.9rem;">${new Date(last.date).toLocaleDateString()}</span>
+                <div style="font-weight:bold; margin-bottom:5px;">${new Date(last.date).toLocaleDateString()}</div>
+                <div style="font-size:0.9rem; color:var(--text-sub);">
+                    完成 ${last.exercises.length} 個動作，總計約 ${Math.round(last.duration/60) || 30} 分鐘
                 </div>
-                <p>完成 ${last.exercises.length} 個動作，強度係數 ${last.intensity || '一般'}</p>
             `;
         }
     },
 
+    // 生成訓練邏輯
     generateAndStartWorkout: function() {
-        const { equipment, goal, weeks } = this.data.profile;
+        const { equipment, goal, weight } = this.data.profile;
         const plan = [];
 
-        // 依據目標與週期設定參數
-        let sets = 3;
-        let reps = '10-12';
-        // 如果時間短(weeks < 8)，強度增加
-        if (weeks < 8) sets = 4;
+        // 簡易 AI 參數計算
+        const getParams = (ex) => {
+            let sets = 3;
+            let reps = 12;
+            let w = 0; // 建議重量
 
-        if (goal === 'strength') reps = '5-8';
-        if (goal === 'fat_loss') reps = '15-20';
+            if (ex.type === 'cardio') {
+                return { sets: 1, reps: '10分鐘', weight: 0, label: '時間' };
+            }
+            if (ex.type === 'core') {
+                return { sets: 3, reps: '20秒', weight: 0, label: '時間' };
+            }
 
-        const pick = (cat) => {
-            const avail = EXERCISE_DB[cat].filter(ex => equipment.includes(ex.equip));
+            // 重量邏輯：體重 * 係數 (簡單模擬)
+            if (ex.factor) {
+                w = Math.round(weight * ex.factor);
+                if (goal === 'muscle') { reps = 10; w = Math.round(w * 1.1); } // 增肌重一點
+                if (goal === 'fat_loss') { reps = 15; w = Math.round(w * 0.8); } // 減脂輕一點
+            }
+
+            return { sets, reps, weight: w, label: '次數' };
+        };
+
+        const pick = (list) => {
+            const avail = list.filter(e => equipment.includes(e.equip));
             return avail.length ? avail[Math.floor(Math.random() * avail.length)] : null;
         };
 
         // 1. Warmup
-        const warmup = pick('warmup') || EXERCISE_DB.warmup[1];
-        plan.push({ ...warmup, sets: 1, reps: '5-10分鐘', rest: '0' });
+        const wm = pick(EXERCISE_DB.warmup);
+        if(wm) plan.push({ ...wm, ...getParams(wm), id: 0 });
 
-        // 2. Main Lifts (Push/Pull/Legs)
-        ['legs', 'chest', 'back', 'shoulder'].forEach(cat => {
-            const ex = pick(cat);
-            if(ex) plan.push({ ...ex, sets, reps, rest: '60-90秒' });
+        // 2. Main (3-4 moves)
+        const mainMoves = EXERCISE_DB.main.filter(e => equipment.includes(e.equip));
+        // Shuffle
+        mainMoves.sort(() => Math.random() - 0.5);
+        mainMoves.slice(0, 4).forEach((m, idx) => {
+            plan.push({ ...m, ...getParams(m), id: idx + 1 });
         });
 
         // 3. Core
-        const core = pick('core');
-        if(core) plan.push({ ...core, sets: 3, reps: '15-20', rest: '45秒' });
+        const core = pick(EXERCISE_DB.core);
+        if(core) plan.push({ ...core, ...getParams(core), id: 99 });
 
-        this.data.currentWorkout = plan;
-        this.renderWorkoutPage(plan);
+        this.data.currentWorkout = plan.map(p => ({...p, timer: 0, completed: false}));
+        this.renderWorkoutPage();
         this.navigate('workout-page');
     },
 
-    renderWorkoutPage: function(plan) {
+    renderWorkoutPage: function() {
         const list = document.getElementById('workout-list');
         list.innerHTML = '';
         
-        const now = new Date();
-        document.getElementById('workout-focus').textContent = `${now.getMonth()+1}/${now.getDate()} 全身綜合訓練`;
-
-        plan.forEach((ex, index) => {
-            const isWarmup = index === 0;
+        this.data.currentWorkout.forEach((ex, idx) => {
             const card = document.createElement('div');
-            card.className = 'card';
+            card.className = `card ${ex.completed ? 'completed' : ''}`;
+            card.id = `card-${idx}`;
+            
+            // AI 建議值顯示
+            const suggText = ex.weight > 0 ? `AI 建議: ${ex.weight}kg x ${ex.reps}` : `目標: ${ex.reps}`;
+
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span class="tag">${isWarmup ? '暖身' : ex.type.toUpperCase()}</span>
-                    <strong>${ex.name}</strong>
-                </div>
-
-                <div class="exercise-media">
-                    <div class="media-box">
-                        <img src="${getGifUrl(ex.gif)}" alt="${ex.name} GIF">
-                        <div class="media-label"><i class="fa-solid fa-film"></i> 動作演示</div>
-                    </div>
-                    <div class="media-box">
-                        <img src="${getMuscleUrl(ex.muscle)}" alt="${ex.muscle}">
-                        <div class="media-label"><i class="fa-solid fa-child-reaching"></i> ${ex.muscle}</div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <span class="tag">${ex.type === 'cardio' ? '暖身' : '訓練'}</span>
+                        <h3 style="margin-top:5px;">${ex.name}</h3>
                     </div>
                 </div>
 
-                <div style="display:flex; justify-content:space-around; background:#f9fafb; padding:10px; border-radius:10px; margin-bottom:10px;">
-                    <div style="text-align:center;">
-                        <div style="color:var(--text-sub); font-size:0.8rem;">組數</div>
-                        <div style="font-weight:bold; color:var(--primary);">${ex.sets}</div>
+                <div class="muscle-info">
+                    <strong>🎯 ${ex.muscle}</strong><br>
+                    <span style="color:#666; font-size:0.85rem;">${ex.tips}</span>
+                </div>
+
+                <div class="workout-input-row">
+                    <div class="w-input-group">
+                        <label>重量 (kg)</label>
+                        <input type="number" id="in-w-${idx}" value="${ex.weight || ''}" placeholder="0">
                     </div>
-                    <div style="text-align:center;">
-                        <div style="color:var(--text-sub); font-size:0.8rem;">次數</div>
-                        <div style="font-weight:bold; color:var(--primary);">${ex.reps}</div>
+                    <div class="w-input-group">
+                        <label>組數</label>
+                        <input type="number" id="in-s-${idx}" value="${ex.sets}" placeholder="3">
                     </div>
-                    <div style="text-align:center;">
-                        <div style="color:var(--text-sub); font-size:0.8rem;">休息</div>
-                        <div style="font-weight:bold; color:var(--primary);">${ex.rest}</div>
+                    <div class="w-input-group" style="flex:2; display:flex; align-items:center; justify-content:flex-end;">
+                        <span style="font-size:0.8rem; color:var(--primary);">${suggText}</span>
                     </div>
                 </div>
 
-                <div class="tips">💡 ${ex.tips}</div>
-                
-                ${!isWarmup ? `
-                <div class="input-row">
-                    <div class="input-group">
-                        <span>重量 (kg)</span>
-                        <input type="number" class="wo-input-weight" placeholder="--">
-                    </div>
-                    <div class="input-group">
-                        <span>實際次數</span>
-                        <input type="number" class="wo-input-reps" placeholder="--">
-                    </div>
-                </div>
-                ` : ''}
+                <div class="timer-display" id="timer-${idx}">00:00</div>
+
+                ${!ex.completed ? `
+                    <button class="btn" id="btn-${idx}" onclick="app.toggleTimer(${idx})">
+                        <i class="fa-solid fa-play" style="margin-right:8px;"></i> 開始動作
+                    </button>
+                ` : `
+                    <button class="btn btn-outline" disabled>
+                        <i class="fa-solid fa-check" style="margin-right:8px;"></i> 已完成
+                    </button>
+                `}
             `;
             list.appendChild(card);
         });
     },
 
+    toggleTimer: function(idx) {
+        const btn = document.getElementById(`btn-${idx}`);
+        const timerDisplay = document.getElementById(`timer-${idx}`);
+        const ex = this.data.currentWorkout[idx];
+
+        if (!this.data.timers[idx]) {
+            // 開始計時
+            btn.innerHTML = '<i class="fa-solid fa-stop"></i> 完成並停止';
+            btn.classList.add('btn-stop');
+            
+            const startTime = Date.now() - (ex.timer * 1000);
+            
+            this.data.timers[idx] = setInterval(() => {
+                const sec = Math.floor((Date.now() - startTime) / 1000);
+                ex.timer = sec;
+                // 格式化 mm:ss
+                const m = Math.floor(sec / 60).toString().padStart(2, '0');
+                const s = (sec % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `${m}:${s}`;
+            }, 1000);
+
+        } else {
+            // 停止並完成
+            clearInterval(this.data.timers[idx]);
+            delete this.data.timers[idx];
+            
+            ex.completed = true;
+            
+            // UI 變更
+            document.getElementById(`card-${idx}`).classList.add('completed');
+            btn.className = 'btn btn-outline';
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> 已完成';
+            btn.disabled = true;
+
+            // 存入數據 (暫存於 object)
+            ex.actualWeight = document.getElementById(`in-w-${idx}`).value;
+            ex.actualSets = document.getElementById(`in-s-${idx}`).value;
+        }
+    },
+
     finishWorkout: function() {
-        if(!confirm('確定完成並儲存？')) return;
+        // 檢查是否還有計時器在跑
+        if (Object.keys(this.data.timers).length > 0) {
+            alert('請先停止所有動作的計時器！');
+            return;
+        }
+        
+        // 檢查完成度
+        const completedCount = this.data.currentWorkout.filter(e => e.completed).length;
+        if(completedCount === 0) {
+            alert('您還沒完成任何動作喔！');
+            return;
+        }
+
+        if(!confirm(`已完成 ${completedCount} 個動作，確定儲存嗎？`)) return;
 
         const record = {
             date: new Date().toISOString(),
-            intensity: this.data.profile.weeks < 8 ? '高' : '中',
-            exercises: this.data.currentWorkout.map((ex, i) => ({
-                name: ex.name,
-                completed: true
+            duration: this.data.currentWorkout.reduce((acc, curr) => acc + curr.timer, 0),
+            exercises: this.data.currentWorkout.filter(e => e.completed).map(e => ({
+                name: e.name,
+                weight: e.actualWeight,
+                sets: e.actualSets,
+                seconds: e.timer
             }))
         };
 
         this.data.history.push(record);
-        localStorage.setItem('gym_pro_history', JSON.stringify(this.data.history));
+        localStorage.setItem('gym_plus_history', JSON.stringify(this.data.history));
         
         this.renderHome();
         this.navigate('home-page');
     },
 
     renderProgress: function() {
-        // 身體數據
         const p = this.data.profile;
-        document.getElementById('start-weight').textContent = p.weight;
-        document.getElementById('current-goal-desc').textContent = p.goalDesc;
-        document.getElementById('time-left').textContent = p.weeks;
+        document.getElementById('stat-start-weight').textContent = p.startWeight;
+        document.getElementById('stat-curr-weight').textContent = p.weight;
+        document.getElementById('stat-weeks').textContent = p.time; // 這裡簡單顯示總時長，實務可算剩餘
 
-        // Chart
-        const ctx = document.getElementById('progressChart').getContext('2d');
+        const ctx = document.getElementById('freqChart').getContext('2d');
         if(window.myChart) window.myChart.destroy();
-
+        
         window.myChart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: ['W1', 'W2', 'W3', 'W4'],
                 datasets: [{
                     label: '訓練次數',
                     data: [2, 3, 1, this.data.history.length % 5],
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                    fill: true,
-                    tension: 0.4
+                    backgroundColor: '#2563eb',
+                    borderRadius: 4
                 }]
             },
             options: {
-                responsive: true,
-                plugins: { legend: {display: false} },
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                plugins: { legend: { display: false } }
             }
         });
     },
 
-    generateAdvice: function() {
-        const box = document.getElementById('ai-advice');
-        const p = this.data.profile;
-        let msg = "";
-
-        if (p.goal === 'fat_loss') {
-            msg = `針對「${p.goalDesc}」的目標：請確保心率達到最大心率的 60-70%。你的 TDEE 約為 ${Math.round(p.bmr*1.35)}，建議每日攝取控制在 ${Math.round(p.bmr*1.35)-300} 大卡。`;
-        } else {
-            msg = `針對增肌目標：請確保每組動作接近力竭。建議每日攝取蛋白質約 ${p.weight * 1.5}g - ${p.weight * 2}g。`;
-        }
-        
-        box.innerHTML = `<span style="color:var(--primary); font-weight:bold;">${msg}</span>`;
-    },
-
     resetData: function() {
-        if(confirm('重置將清除所有個人資料與紀錄，確定嗎？')) {
+        if(confirm('確定清除所有資料並重來？')) {
             localStorage.clear();
             location.reload();
         }
